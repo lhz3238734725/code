@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <stdarg.h>
 
+static void printf_current_time();
 static int log_target_file_init(int target, char* path);
 
 LhzSimpleLog* globalLog = NULL;
@@ -83,15 +84,15 @@ static int log_target_file_init(int target, char* path){
 //日志退出
 void lhz_log_exit(){
 
-    if (globalLog->target == LOG_TARGET_FILE)
-    {
-        fclose(globalLog->fp);
-    }
-    
     if (globalLog == NULL)
     {
         printf("请先初始化日志上下文\n");
         return;
+    }
+
+    if (globalLog->target == LOG_TARGET_FILE)
+    {
+        fclose(globalLog->fp);
     }
     
     free(globalLog);
@@ -116,6 +117,7 @@ void lhz_log_set_level(int log_level){
 
 //获取日志目标
 void lhz_log_set_target(int target){
+    
     if(globalLog == NULL) {
         printf("请先初始化日志上下文\n");
         return;
@@ -130,6 +132,7 @@ void lhz_log_set_target(int target){
 
 //获取日志等级
 char* lhz_log_get_level(){
+
     if(globalLog == NULL) {
         printf("请先初始化日志上下文\n");
         return NULL;
@@ -143,6 +146,13 @@ char* lhz_log_get_level(){
 
 //日志接口
 void lhz_log(int log_level, const char* format, ...){
+
+    if (globalLog == NULL)
+    {
+        printf("请先初始化日志上下文\n");
+        return;
+    }
+      
     if(log_level <= globalLog->log_level){
         if (globalLog->target == LOG_TARGET_TREMINAL)
         {
