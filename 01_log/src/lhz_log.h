@@ -2,6 +2,7 @@
 #define __LHZ_LOG_H__
 
 #include <stdio.h>
+#include <pthread.h>
 
 //颜色控制开始与结束
 #define COLOR_CONTROL_START "\033[0;"
@@ -43,6 +44,7 @@ struct _LhzSimpleLog {
     FILE* fp;
     char* path;
     int log_size;
+    pthread_mutex_t mutex;
 };
 
 //日志初始化

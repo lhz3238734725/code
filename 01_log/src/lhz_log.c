@@ -38,13 +38,20 @@ static void printf_current_time(){
 //日志初始化
 int lhz_log_init(int log_level, int target, char* path){
 
+    if (globalLog != NULL)
+    {
+        return 0;
+    }
+
     int globalLog_size = sizeof(LhzSimpleLog);
     globalLog = (LhzSimpleLog*)malloc(globalLog_size);
-    memset(globalLog, 0, sizeof(globalLog_size));
     if(globalLog == NULL){
         printf("lhz_log_init error\n");
         return -1;
     } 
+    memset(globalLog, 0, sizeof(globalLog_size));
+
+    pthread_mutex_init(&globalLog->mutex, NULL);
 
     if(log_level >= LOG_LEVEL_ERROR && log_level <= LOG_LEVEL_DEBUG){
         globalLog->log_level = log_level;
@@ -94,8 +101,10 @@ void lhz_log_exit(){
     {
         fclose(globalLog->fp);
     }
-    
+    pthread_mutex_t* mutex = &globalLog->mutex;
+    pthread_mutex_lock(mutex);
     free(globalLog);
+    pthread_mutex_unlock(mutex);
 }
 
 //设置日志等级
@@ -111,8 +120,10 @@ void lhz_log_set_level(int log_level){
         printf("请输入正确的日志等级\n");
         return;
     }
-    
+    pthread_mutex_t* mutex = &globalLog->mutex;
+    pthread_mutex_lock(mutex);
     globalLog->log_level = log_level;
+    pthread_mutex_unlock(mutex);
 }
 
 //获取日志目标
@@ -127,7 +138,10 @@ void lhz_log_set_target(int target){
         printf("请输入正确的日志目标\n");
         return;
     }
+    pthread_mutex_t* mutex = &globalLog->mutex;
+    pthread_mutex_lock(mutex);
     globalLog->target = target;
+    pthread_mutex_unlock(mutex);
 }
 
 //获取日志等级
@@ -152,7 +166,8 @@ void lhz_log(int log_level, const char* format, ...){
         printf("请先初始化日志上下文\n");
         return;
     }
-      
+    pthread_mutex_t* mutex = &globalLog->mutex;
+    pthread_mutex_lock(mutex);
     if(log_level <= globalLog->log_level){
         if (globalLog->target == LOG_TARGET_TREMINAL)
         {
@@ -201,4 +216,5 @@ void lhz_log(int log_level, const char* format, ...){
             if(globalLog->log_size >= FILE_LOG_MAX_BUFFER_SIZE) fflush(globalLog->fp);
         }
     }
+    pthread_mutex_unlock(mutex);
 }
