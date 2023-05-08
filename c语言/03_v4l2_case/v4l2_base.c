@@ -329,7 +329,7 @@ int main(int argc, char* argv[]){
     }
 
     //获取二十帧数据
-    for(int i = 0; i < 2000; i++){
+    for(int i = 0; i < 20; i++){
         FD_ZERO(&fds);
         FD_SET(video.fd, &fds);
 
@@ -367,7 +367,9 @@ int main(int argc, char* argv[]){
         set_video_device_stream_queue(&video, index);
         usleep(1000);
     }
-    
+
+    set_video_device_stream_off(&video);
+    close_video_device(&video);
     return 0;
 
 exit:
