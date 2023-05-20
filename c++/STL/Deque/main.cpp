@@ -97,6 +97,9 @@ int main(int argc, char* argv[]) {
 	*/
 	std::sort(d1->begin(), d1->end());
 	printfDeque(d1);
+	
+	delete d1;
+	delete d2;
 
 	return 0;
 }

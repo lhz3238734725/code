@@ -44,6 +44,7 @@ int main(int argc, char* argv[]) {
 		std::cout << q1->front() << std::endl;
 		q1->pop();
 	}
-
+	
+	delete q1;
 	return 0;
 }

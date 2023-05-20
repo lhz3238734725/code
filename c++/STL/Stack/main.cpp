@@ -44,6 +44,7 @@ int main(int argc, char* argv[]) {
 		std::cout << stack1->top() << std::endl;
 		stack1->pop();
 	}
-
+	
+	delete stack1 ;
 	return 0;
 }
